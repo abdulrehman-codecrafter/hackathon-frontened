@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/Frontened/HomeScreen';
 import Icon from 'react-native-vector-icons/AntDesign';
 import SettingsScreen from '../screens/Frontened/SettingsScreen';
+import AddEventScreen from '../screens/Frontened/AddEventScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -45,6 +46,21 @@ export default function TabNavigator() {
           ),
         }}
       />
+      <Tab.Screen
+       name="AddEvent" 
+       component={AddEventScreen}
+        options={{
+            tabBarIcon: ({ size, focused }) => (
+              <Icon
+                name="pluscircleo" // Profile icon
+                
+                color={focused ? '#9775FA' : 'grey'} // Change color based on focus
+                size={size}
+              />
+            ),
+          }}
+
+       />
       <Tab.Screen
        name="Settings" 
        component={SettingsScreen}

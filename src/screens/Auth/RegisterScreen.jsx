@@ -15,8 +15,10 @@ import {Button} from 'react-native-paper';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import CustomToast from '../../components/Toast';
 import {useToast} from '../../contexts/ToastContext';
+import { useNavigation } from '@react-navigation/native';
 
-export default function RegisterScreen({navigation}) {
+export default function RegisterScreen() {
+  const navigation=useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const {toastVisible, toastConfig, showToast} = useToast();
 
@@ -56,7 +58,7 @@ export default function RegisterScreen({navigation}) {
         'https://hackathon-backened-production.up.railway.app/users/register',
         form,
       );
-
+      setForm(null)
       showToast('success', 'Account created successfully');
     } catch (err) {
       showToast('error', err.response.data.message);

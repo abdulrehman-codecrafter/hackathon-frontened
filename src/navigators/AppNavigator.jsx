@@ -4,6 +4,7 @@ import TabNavigator from './TabNavigator';
 import EditProfileScreen from '../screens/Frontened/EditProfileScreen';
 import AddressScreen from '../screens/Frontened/AddressScreen';
 import FavoritesScreen from '../screens/Frontened/FavoritesScreen';
+import EventDetailsScreen from '../screens/Frontened/EventDetailsScreen';
 
 
 const AppStack = createNativeStackNavigator();
@@ -28,6 +29,10 @@ export default function AppNavigator() {
       <AppStack.Screen
         name="Address"
         component={AddressScreen}
+      />
+      <AppStack.Screen
+        name="EventDetails"
+        component={EventDetailsScreen}
       />
       <AppStack.Screen
         name="Favorites"

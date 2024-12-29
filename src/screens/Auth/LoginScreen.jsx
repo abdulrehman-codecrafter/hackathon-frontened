@@ -18,7 +18,7 @@ import {useAuth} from '../../contexts/AuthContext';
 import {useToast} from '../../contexts/ToastContext';
 import CustomToast from '../../components/Toast';
 
-export default function LoginScreen() {
+export default function LoginScreen({navigation}) {
   const {toastVisible, toastConfig, showToast} = useToast();
 
   const [form, setForm] = useState({
@@ -70,17 +70,14 @@ export default function LoginScreen() {
           flex: 1,
           backgroundColor: '#e8ecf4',
           paddingHorizontal: 20,
-          paddingTop: 130,
+          paddingTop: 90,
         }}>
         <KeyboardAvoidingView style={styles.container}>
           <View style={styles.header}>
-            <Text style={styles.title}>
-              Login to <Text style={{color: '#075eec'}}>Martify</Text>
-            </Text>
+            <Image source={require('../../assets/logo.png')} style={styles.headerImg} />
+             
 
-            <Text style={styles.subtitle}>
-              Shop anything you want, at the best prices
-            </Text>
+
           </View>
 
           <View style={styles.form}>
@@ -181,10 +178,10 @@ const styles = StyleSheet.create({
     marginVertical: 40,
   },
   headerImg: {
-    width: 80,
-    height: 80,
+    width: 155,
+    height: 110,
     alignSelf: 'center',
-    marginBottom: 30,
+    // marginBottom: 30,
   },
   /** Form */
   form: {
