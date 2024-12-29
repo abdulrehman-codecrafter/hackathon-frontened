@@ -1,41 +1,46 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Alert,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import DatePicker from 'react-native-date-picker';
 import axios from 'axios';
 import { useToast } from '../../contexts/ToastContext';
 import CustomToast from '../../components/Toast';
 import { useEventsContext } from '../../contexts/EventContexts';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-const EventInputScreen = () => {
-
-  const {dispatch} = useEventsContext();
-  const {toastVisible, toastConfig, showToast} = useToast();
+const UpdateEventScreen = () => {
+  const { dispatch } = useEventsContext();
+  const { toastVisible, toastConfig, showToast } = useToast();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [form, setForm] = useState({
     title: '',
     description: '',
     date: '',
     category: '',
-    address: {
-      venue: '',
-      city: '',
-      country: '',
-    },
+    address: { venue: '', city: '', country: '' },
     image: null,
-    visibility: 'public', // Default to public visibility
+    visibility: 'public',
   });
-
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
+  const route = useRoute();
+
+  const event = route.params?.event;
+
+  useEffect(() => {
+    if (event) {
+      setForm({
+        title: event.title,
+        description: event.description,
+        date: event.date,
+        category: event.category,
+        address: event.address,
+        image: { uri: event.image },
+        visibility: event.visibility,
+      });
+    }
+    console.log(event.category)
+  }, [event]);
 
   const handleInputChange = (key, value) => {
     setForm({ ...form, [key]: value });
@@ -94,9 +99,9 @@ const EventInputScreen = () => {
     }
   };
 
-  const handleCreateEvent = async () => {
-    if (!form.title || !form.description || !form.date || !form.category || 
-        !form.address.venue || !form.address.city || !form.address.country) {
+  const handleUpdateEvent = async () => {
+    if (!form.title || !form.description || !form.date || !form.category ||
+      !form.address.venue || !form.address.city || !form.address.country) {
       showToast('error', 'All fields are required');
       return;
     }
@@ -112,8 +117,8 @@ const EventInputScreen = () => {
         }
       }
 
-      const response = await axios.post(
-        'https://hackathon-backened-production.up.railway.app/events/create', 
+      const response = await axios.put(
+        `https://hackathon-backened-production.up.railway.app/events/update/${event._id}`,
         {
           title: form.title,
           description: form.description,
@@ -121,26 +126,18 @@ const EventInputScreen = () => {
           category: form.category,
           address: form.address,
           image: imageUrl,
-          visibility: form.visibility, // Include visibility
+          visibility: form.visibility,
         }
       );
+      showToast('success', 'Event updated successfully');
 
-      showToast('success', 'Event created successfully');
-      // console.log('Event created:', response.data.data);
-      dispatch({ type: 'ADD_EVENT', payload: response.data.data });
-      setForm({
-        title: '',
-        description: '',
-        date: '',
-        category: '',
-        address: { venue: '', city: '', country: '' },
-        image: null,
-        visibility: 'public', // Reset visibility to default
-      });
+      // Update the event in the context
+      dispatch({ type: 'UPDATE_EVENT', payload: response.data.data });
 
+      navigation.navigate('Tab');
     } catch (error) {
-      showToast('error', 'Failed to create event');
-      console.error('Failed to create event:', error);
+      showToast('error', 'Failed to update event');
+      console.error('Failed to update event:', error);
     } finally {
       setLoading(false);
     }
@@ -148,7 +145,7 @@ const EventInputScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Create Event</Text>
+      <Text style={styles.header}>Update Event</Text>
 
       <Text style={styles.label}>Event Title</Text>
       <TextInput
@@ -229,22 +226,6 @@ const EventInputScreen = () => {
         placeholderTextColor="#888"
       />
 
-      <Text style={styles.label}>Event Visibility</Text>
-      <View style={styles.visibilityContainer}>
-        <TouchableOpacity
-          style={[styles.visibilityButton, form.visibility === 'public' && styles.selectedVisibility]}
-          onPress={() => handleInputChange('visibility', 'public')}
-        >
-          <Text style={styles.visibilityButtonText}>Public</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.visibilityButton, form.visibility === 'private' && styles.selectedVisibility]}
-          onPress={() => handleInputChange('visibility', 'private')}
-        >
-          <Text style={styles.visibilityButtonText}>Private</Text>
-        </TouchableOpacity>
-      </View>
-
       <Text style={styles.label}>Event Image</Text>
       <TouchableOpacity style={styles.imagePicker} onPress={handleImagePick}>
         <Text style={styles.imagePickerText}>Pick an Image</Text>
@@ -256,11 +237,11 @@ const EventInputScreen = () => {
 
       <TouchableOpacity 
         style={[styles.createButton, loading && styles.disabledButton]} 
-        onPress={handleCreateEvent} 
+        onPress={handleUpdateEvent} 
         disabled={loading}
       >
         <Text style={styles.createButtonText}>
-          {loading ? 'Creating...' : 'Create Event'}
+          {loading ? 'Saving...' : 'Update Event'}
         </Text>
       </TouchableOpacity>
 
@@ -275,95 +256,95 @@ const EventInputScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333',
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-    color: '#333',
-  },
-  subLabel: {
-    fontSize: 14,
-    marginBottom: 8,
-    color: '#555',
-  },
-  input: {
-    backgroundColor: '#F5F6FA',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 16,
-    color: '#000',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  column: {
-    width: '48%',
-  },
-  imagePicker: {
-    backgroundColor: '#9775FA',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  imagePickerText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  imagePreview: {
-    width: '100%',
-    height: 200,
-    borderRadius: 8,
-    marginBottom: 16,
-  },
-  createButton: {
-    backgroundColor: '#34C759',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  disabledButton: {
-    backgroundColor: '#A8A8A8',
-  },
-  createButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  visibilityContainer: {
-    flexDirection: 'row',
-    marginBottom: 16,
-  },
-  visibilityButton: {
-    backgroundColor: '#E0E0E0',
-    padding: 12,
-    borderRadius: 8,
-    marginRight: 10,
-    alignItems: 'center',
-    width: '48%',
-  },
-  selectedVisibility: {
-    backgroundColor: '#34C759',
-  },
-  visibilityButtonText: {
-    color: '#000',
-    fontWeight: 'bold',
-  },
-});
-
-export default EventInputScreen;
+    container: {
+      flexGrow: 1,
+      padding: 20,
+      backgroundColor: '#fff',
+    },
+    header: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      marginBottom: 20,
+      color: '#333',
+    },
+    label: {
+      fontSize: 16,
+      marginBottom: 8,
+      color: '#333',
+    },
+    subLabel: {
+      fontSize: 14,
+      marginBottom: 8,
+      color: '#555',
+    },
+    input: {
+      backgroundColor: '#F5F6FA',
+      padding: 12,
+      borderRadius: 8,
+      marginBottom: 16,
+      color: '#000',
+      borderWidth: 1,
+      borderColor: '#E0E0E0',
+    },
+    row: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 16,
+    },
+    column: {
+      width: '48%',
+    },
+    imagePicker: {
+      backgroundColor: '#9775FA',
+      padding: 12,
+      borderRadius: 8,
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    imagePickerText: {
+      color: '#fff',
+      fontWeight: 'bold',
+    },
+    imagePreview: {
+      width: '100%',
+      height: 200,
+      borderRadius: 8,
+      marginBottom: 16,
+    },
+    createButton: {
+      backgroundColor: '#34C759',
+      padding: 16,
+      borderRadius: 8,
+      alignItems: 'center',
+      marginTop: 16,
+    },
+    disabledButton: {
+      backgroundColor: '#A8A8A8',
+    },
+    createButtonText: {
+      color: '#fff',
+      fontWeight: 'bold',
+      fontSize: 16,
+    },
+    visibilityContainer: {
+      flexDirection: 'row',
+      marginBottom: 16,
+    },
+    visibilityButton: {
+      backgroundColor: '#E0E0E0',
+      padding: 12,
+      borderRadius: 8,
+      marginRight: 10,
+      alignItems: 'center',
+      width: '48%',
+    },
+    selectedVisibility: {
+      backgroundColor: '#34C759',
+    },
+    visibilityButtonText: {
+      color: '#000',
+      fontWeight: 'bold',
+    },
+  });
+  
+export default UpdateEventScreen;

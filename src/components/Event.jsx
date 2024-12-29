@@ -3,10 +3,13 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Avatar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { formatDate } from '../utils/formatDate';
+
 
 const EventCard = ({ event }) => {
   
     const navigation = useNavigation();
+    console.log(event)
   return (
     
     <TouchableOpacity style={styles.card} onPress={()=> navigation.navigate('EventDetails', {event})}>
@@ -15,11 +18,11 @@ const EventCard = ({ event }) => {
 
       {/* Event Details Section */}
       <View style={styles.eventDetails}>
-        <Text style={styles.eventDate}>{event.date}</Text>
+        <Text style={styles.eventDate}>{formatDate(event.date)}</Text>
         <Text style={styles.eventTitle}>{event.title}</Text>
         <View style={styles.locationSection}>
           <Icon name="map-marker" size={19} color="gray" style={{marginTop:1}} />
-          <Text style={styles.eventLocation}>{event.location}</Text>
+          <Text style={styles.eventLocation}>{event.address.city+' , '+event.address.country}</Text>
         </View>
       </View>
     </TouchableOpacity>

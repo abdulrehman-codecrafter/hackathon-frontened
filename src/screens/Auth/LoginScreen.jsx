@@ -50,9 +50,11 @@ export default function LoginScreen({navigation}) {
 
       
       const token = data.data.token;
-      console.log(data.data.user);
-      console.log(token);
+      
+      axios.defaults.headers.common['Authorization'] = token;
+
       await AsyncStorage.setItem('token', token)
+
       dispatch({type:'SET_USER',payload:data.data.user}); 
       showToast('success', 'Login successful');
 

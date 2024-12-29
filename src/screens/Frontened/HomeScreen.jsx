@@ -4,16 +4,17 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   FlatList,
   SafeAreaView,
 } from 'react-native';
-import {Avatar, IconButton, Button} from 'react-native-paper';
-import {dummyEvents} from '../../data/dummyEvents';
+import { Button} from 'react-native-paper';
+
 import EventCard from '../../components/Event';
+import { useEventsContext } from '../../contexts/EventContexts';
 
 export default function HomeScreen({navigation}) {
-
+  const {events} = useEventsContext()
+  // console.log(events)
   
   const renderNonStickyHeader = () => (
     <View>
@@ -23,22 +24,7 @@ export default function HomeScreen({navigation}) {
         <Text style={styles.subtitle}>Welcome to EventHub</Text>
       </View>
 
-      {/* Search Section */}
-      <View style={styles.searchSection}>
-        <TextInput
-          placeholder="Search"
-          style={styles.searchInput}
-          placeholderTextColor="grey"
-          cursorColor="black"
-        />
-        <IconButton
-          icon="magnify"
-          iconColor="white"
-          size={25}
-          style={styles.searchButton}
-          onPress={() => console.log('Search pressed')}
-        />
-      </View>
+      
 
       {/* Buttons Section */}
       <View style={styles.buttonSection}>
@@ -62,15 +48,15 @@ export default function HomeScreen({navigation}) {
       </View>
 
       {/* Section Title */}
-      <Text style={styles.sectionTitle}>New Arrival</Text>
+      <Text style={styles.sectionTitle}>Events </Text>
     </View>
   );
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={dummyEvents}
-        keyExtractor={(item) => item.id.toString()}
+        data={events}
+        keyExtractor={(item) => item._id}
         renderItem={({item}) => <EventCard event={item} />}
         ListHeaderComponent={renderNonStickyHeader}
         contentContainerStyle={styles.contentContainer}

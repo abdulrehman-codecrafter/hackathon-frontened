@@ -5,6 +5,7 @@ import EditProfileScreen from '../screens/Frontened/EditProfileScreen';
 
 import FavoritesScreen from '../screens/Frontened/FavoritesScreen';
 import EventDetailsScreen from '../screens/Frontened/EventDetailsScreen';
+import UpdateEventScreen from '../screens/Frontened/UpdateScreen';
 
 
 const AppStack = createNativeStackNavigator();
@@ -32,9 +33,10 @@ export default function AppNavigator() {
         component={EventDetailsScreen}
       />
       <AppStack.Screen
-        name="Favorites"
-        component={FavoritesScreen}
+        name="UpdateEvent"
+        component={UpdateEventScreen}
       />
+      
     
     </AppStack.Navigator>
   );

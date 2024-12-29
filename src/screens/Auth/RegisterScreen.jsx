@@ -15,19 +15,20 @@ import {Button} from 'react-native-paper';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import CustomToast from '../../components/Toast';
 import {useToast} from '../../contexts/ToastContext';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
+const initialState = {
+  name: '',
+  email: '',
+  password: '',
+  confirmPassword: '',
+};
 export default function RegisterScreen() {
-  const navigation=useNavigation();
+  const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const {toastVisible, toastConfig, showToast} = useToast();
 
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
+  const [form, setForm] = useState(initialState);
 
   const handleSubmit = async () => {
     const {name, email, password, confirmPassword} = form;
@@ -58,7 +59,7 @@ export default function RegisterScreen() {
         'https://hackathon-backened-production.up.railway.app/users/register',
         form,
       );
-      setForm(null)
+      setForm(initialState);
       showToast('success', 'Account created successfully');
     } catch (err) {
       showToast('error', err.response.data.message);
@@ -141,7 +142,12 @@ export default function RegisterScreen() {
               />
             </View>
 
-            <Button onPress={handleSubmit} loading={isLoading} mode='elevated' dark={true} style={styles.btnText}>
+            <Button
+              onPress={handleSubmit}
+              loading={isLoading}
+              mode="elevated"
+              dark={true}
+              style={styles.btnText}>
               Register
             </Button>
           </View>
@@ -233,7 +239,7 @@ const styles = StyleSheet.create({
     borderColor: '#C9D3DB',
     borderStyle: 'solid',
   },
-  
+
   btnText: {
     paddingVertical: 6,
     marginTop: 15,
