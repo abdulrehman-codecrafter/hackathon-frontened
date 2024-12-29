@@ -41,11 +41,6 @@ export default function ProfileScreen() {
       onPress: () => navigation.navigate('Favorites'),
     },
     {
-      label: 'Delivery Address',
-      icon: 'map-pin',
-      onPress: () => navigation.navigate('Address'),
-    },
-    {
       label: 'Help and Support',
       icon: 'help-circle',
       onPress: () =>

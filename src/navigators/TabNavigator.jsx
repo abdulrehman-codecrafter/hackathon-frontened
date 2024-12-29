@@ -3,7 +3,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/Frontened/HomeScreen';
 import Icon from 'react-native-vector-icons/AntDesign';
 import SettingsScreen from '../screens/Frontened/SettingsScreen';
-import AddEventScreen from '../screens/Frontened/AddEventScreen';
+
+import CreateEventScreen from '../screens/Frontened/CreateEventScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -47,8 +48,8 @@ export default function TabNavigator() {
         }}
       />
       <Tab.Screen
-       name="AddEvent" 
-       component={AddEventScreen}
+       name="CreateEvent" 
+       component={CreateEventScreen}
         options={{
             tabBarIcon: ({ size, focused }) => (
               <Icon
